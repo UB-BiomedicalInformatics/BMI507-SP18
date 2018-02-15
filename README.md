@@ -1,2 +1,3 @@
-# BMI507-SP18
-CDSS
+# BMI507 -- Spring 2018
+
+
