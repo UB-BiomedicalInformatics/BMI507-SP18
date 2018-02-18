@@ -2,7 +2,7 @@
 
 ## Session 0: Setup
 * R & RStudio
-    * [Download](https://cloud.r-project.org/) and intstall R
+    * [Download](https://cloud.r-project.org/) and install R
     * [Download](https://www.rstudio.com/products/rstudio/download/#download) and install RStudio, an Integrated Development Environment (IDE) for R
 * Anaconda Python
     * [Download](https://www.anaconda.com/download/) and install version 3.6 of Anaconda
