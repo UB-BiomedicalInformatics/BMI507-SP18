@@ -1,0 +1,60 @@
+---
+title: "Kaggle Data Import & Tidy"
+output: github_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Load Required Packages
+
+```{r Load Required Packages}
+library(tidyverse)
+library(stringr)
+```
+
+## List training files
+
+```{r list training data files}
+training_files <- list.files(path = "sample_data/train_data/")
+training_files
+```
+
+## List testing files
+
+```{r list test data files}
+testing_files <- list.files(path = "sample_data/test_data/")
+testing_files
+```
+
+## Confirm file counts
+
+```{r confirm file counts}
+c(length(testing_files), length(training_files))
+```
+
+## Confirm matching files
+
+```{r}
+training_files_names <- str_replace(training_files, "training_", "")
+testing_files_names <- str_replace(testing_files, "test_", "")
+table(training_files_names, testing_files_names)
+```
+```{r}
+training_data <- training_files %>% 
+    map(~paste0("sample_data/train_data/", .x)) %>% 
+    map(read_csv)
+```
+
+
+```{r}
+df <- training_data[c(10, 1, 2, 3)] %>% 
+    reduce(inner_join, by = "PatientGuid") %>% 
+    filter(!is.na(PatientGuid))
+```
+
+```{r}
+glimpse(df)
+```
+
