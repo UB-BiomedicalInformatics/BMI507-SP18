@@ -11,6 +11,7 @@ knitr::opts_chunk$set(echo = TRUE)
 
 ```{r Load Required Packages}
 library(tidyverse)
+library(stringr)
 ```
 
 ## List training files
@@ -40,3 +41,20 @@ training_files_names <- str_replace(training_files, "training_", "")
 testing_files_names <- str_replace(testing_files, "test_", "")
 table(training_files_names, testing_files_names)
 ```
+```{r}
+training_data <- training_files %>% 
+    map(~paste0("sample_data/train_data/", .x)) %>% 
+    map(read_csv)
+```
+
+
+```{r}
+df <- training_data[c(10, 1, 2, 3)] %>% 
+    reduce(inner_join, by = "PatientGuid") %>% 
+    filter(!is.na(PatientGuid))
+```
+
+```{r}
+glimpse(df)
+```
+
