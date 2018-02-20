@@ -13,12 +13,30 @@ knitr::opts_chunk$set(echo = TRUE)
 library(tidyverse)
 ```
 
-## Including Plots
+## List training files
 
-You can also embed plots, for example:
-
-```{r pressure, echo=FALSE}
-plot(pressure)
+```{r list training data files}
+training_files <- list.files(path = "sample_data/train_data/")
+training_files
 ```
 
-Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
+## List testing files
+
+```{r list test data files}
+testing_files <- list.files(path = "sample_data/test_data/")
+testing_files
+```
+
+## Confirm file counts
+
+```{r confirm file counts}
+c(length(testing_files), length(training_files))
+```
+
+## Confirm matching files
+
+```{r}
+training_files_names <- str_replace(training_files, "training_", "")
+testing_files_names <- str_replace(testing_files, "test_", "")
+table(training_files_names, testing_files_names)
+```
