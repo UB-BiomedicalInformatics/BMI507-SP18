@@ -19,7 +19,8 @@
 
 #### Sample Project
 * [Kaggle/Practice Fusion Diabetes Classification Challenge](https://www.kaggle.com/c/pf2012-diabetes) *Note: Data is not available here any longer, see GitHub repo below*
-  * [GitHub Link to Data and R Project](https://github.com/yasminlucero/Kaggle) *Note: Includes project data in "/data/"*
+* [Kaggle/Practice Fusion Analyze This! Open Challenge](https://www.kaggle.com/c/pf2012-at)
+  * [Second Place Winner - R Project](https://github.com/yasminlucero/Kaggle) *Note: Includes project data in "/data/"*
 
 ## Session 2 (3/7): Statistical Machine Learning Analysis: Regression and Classification
 * TBA
