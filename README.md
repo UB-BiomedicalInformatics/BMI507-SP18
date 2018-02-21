@@ -1,3 +1,6 @@
+
+[![Binder](https://mybinder.org/badge.svg)](https://mybinder.org/v2/gh/UB-BiomedicalInformatics/BMI507-SP18/master)
+
 # BMI507 -- Spring 2018
 
 ## Session 0: Setup
