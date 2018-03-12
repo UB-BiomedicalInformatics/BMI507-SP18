@@ -1,0 +1,29 @@
+---
+title: "Transform"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+Depends on import_and_tidy.Rmd
+
+*SAVE OUTPUT FROM import_and_tidy to RDS objects and load them on source.*
+
+```{r}
+training_data <- readRDS("project_data/training.RDS")
+testing_data <- readRDS("project_data/testing.RDS")
+```
+
+
+```{r}
+training_pt_profile <- training_data$patientTranscript %>%
+     group_by(PatientGuid) %>%
+     summarise(TranscriptGuid_count = n_distinct(TranscriptGuid))
+
+training_medications <- training_data$medication %>%
+     group_by(PatientGuid) %>%
+     summarise(medication_guid_count = n_distinct(MedicationGuid))
+
+```

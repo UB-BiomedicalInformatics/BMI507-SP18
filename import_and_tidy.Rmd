@@ -84,13 +84,3 @@ names(testing_data)
 
 Now our data objects are neatly arranged. Scripts we write to manipulate one of these lists can easily be applied to the other, ensuring uniformity across operations and making it easier to trace errors back to their sources.
 
-```{r}
-training_pt_profile <- training_data$patientTranscript %>%
-     group_by(PatientGuid) %>%
-     summarise(TranscriptGuid_count = n_distinct(TranscriptGuid))
-
-training_medications <- training_data$medication %>%
-     group_by(PatientGuid) %>%
-     summarise(medication_guid_count = n_distinct(MedicationGuid))
-
-```
