@@ -9,52 +9,88 @@ knitr::opts_chunk$set(echo = TRUE)
 
 ## Load Required Packages
 
-```{r Load Required Packages}
-library(tidyverse)
-library(stringr)
+```{r Load Required Packages, message=FALSE, warning=FALSE}
+library(readr)      # for reading data from flat files
+library(stringr)    # for performing advanced string operations
+library(purrr)      # for functional programming using the `map` functions
+library(dplyr)      # provides `%>%` operator
 ```
 
-## List training files
+## File and Object Names
 
-```{r list training data files}
+Keeping track of directory, file, and other object names is important to an orderly and reproducible analysis. It is important to do so from the project's very beginning so we don't get lost but also because patterns in those names can make our code easier to create and follow later on.
+
+* The data is provided in two directories: 
+    * one for training (`sample_data/train_data/`)
+    * one for testing (`sample_data/test_data/`)
+    
+* Using the `list.files()` function, we can see that each directory contains 19 individual (Comma Separated Value) [CSV](https://en.wikipedia.org/wiki/Comma-separated_values) files whose names follow a recognizable pattern:
+    * each file in the `train_data` directory starts with `training_` and ends with `.csv`
+    * each file in the `test_data` directory starts with `test_` and ends with `.csv`
+
+```{r}
 training_files <- list.files(path = "sample_data/train_data/")
-training_files
-```
-
-## List testing files
-
-```{r list test data files}
 testing_files <- list.files(path = "sample_data/test_data/")
+
+training_files
+
 testing_files
 ```
 
-## Confirm file counts
-
-```{r confirm file counts}
-c(length(testing_files), length(training_files))
-```
-
-## Confirm matching files
+The `list.files()` function returns a character vector of file names. Each file name in the vector has an index that our other functions can refer to. Using bracket notation, we can access each element of the vector:
 
 ```{r}
-training_files_names <- str_replace(training_files, "training_", "")
-testing_files_names <- str_replace(testing_files, "test_", "")
-table(training_files_names, testing_files_names)
+training_files[1]
 ```
+
+Or we can access a range of elements at once:
+
+```{r}
+testing_files[11:13]
+```
+
+We will use these file names as inputs for the `read_csv` funtion from the package `readr`.
+
+## Read Files Into Working Memory 
+
+We will use a combination of functions to import or "read" the source files into working memory. There are a number of ways to do this but in the interest of organization we will use a combination of `read_csv()`, `paste0()`, and `map()`.
+ 
 ```{r}
 training_data <- training_files %>% 
     map(~paste0("sample_data/train_data/", .x)) %>% 
     map(read_csv)
+
+testing_data <- testing_files %>% 
+    map(~paste0("sample_data/test_data/", .x)) %>% 
+    map(read_csv)
 ```
 
+The result is two `list` objects, one for training data and the other for testing data, each of which contains 19 `data.frame` objects - one for each CSV file. To make these easier to keep track of, we are going to assign each `data.frame` in the lists a name by cleaning up the file names.
 
 ```{r}
-df <- training_data[c(10, 1, 2, 3)] %>% 
-    reduce(inner_join, by = "PatientGuid") %>% 
-    filter(!is.na(PatientGuid))
+training_files_names <- str_replace(training_files, "training_", "")
+training_files_names <- str_replace(training_files_names, "\\.csv", "")
+names(training_data) <- training_files_names
+
+testing_files_names <- str_replace(testing_files, "test_", "")
+testing_files_names <- str_replace(testing_files_names, "\\.csv", "")
+names(testing_data) <- testing_files_names
 ```
 
 ```{r}
-glimpse(df)
+names(training_data)
+names(testing_data)
 ```
 
+Now our data objects are neatly arranged. Scripts we write to manipulate one of these lists can easily be applied to the other, ensuring uniformity across operations and making it easier to trace errors back to their sources.
+
+```{r}
+training_pt_profile <- training_data$patientTranscript %>%
+     group_by(PatientGuid) %>%
+     summarise(TranscriptGuid_count = n_distinct(TranscriptGuid))
+
+training_medications <- training_data$medication %>%
+     group_by(PatientGuid) %>%
+     summarise(medication_guid_count = n_distinct(MedicationGuid))
+
+```

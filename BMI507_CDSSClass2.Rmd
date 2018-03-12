@@ -1,0 +1,69 @@
+---
+title: "Machine Learning in CDSS"
+output: html_document
+---
+
+```{r include = FALSE}
+
+```
+
+This code is for BMI507-SP18 Class on Machine Learning for Classification and Clinical Decision Support.
+
+We will use variables Smoker, age, Gender, height, weight, BMI, systolic and diastolic BP, and if you think any of the labs (d3) are important
+
+## Create New Variables that are needed and merge into one dataframe!
+
+# Dependent variable: diabetes diagnosis (ICD9 codes 250, 250.0, 250.*0 or #250.*2 (e.g., 250, 250.0, 250.00, 250.10, 250.52, etc)
+
+# can use dmIndicator
+
+```{r}
+
+```
+
+
+# Smoker or non-smoker severity level (SmokingStatus_Description)
+
+```{r}
+
+```
+
+
+
+## fill in missing values using mean or median imputation
+
+```{r}
+
+```
+
+## Split into Train, Validation, and Test set
+
+```{r}
+
+```
+
+We will first run a logistic regression.
+
+
+If target variable is factor, classification decision tree is built.
+## Check if Outcome is a factor
+
+```{r}
+
+```
+
+Now, let's compare using random forest. 
+
+If target variable is factor, classification decision tree is built.
+## Check if Outcome is a factor
+
+```{r}
+
+```
+
+Finally, let's run the model as an SVM. 
+
+
+```{r}
+
+```
