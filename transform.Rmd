@@ -7,10 +7,60 @@ output: html_document
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
+## Load required packages
+
+```{r}
+library(tidyverse)
+```
+
 ## Load data saved in last step of `import_and_tidy.Rmd`
 
 ```{r}
 training_data <- readRDS("data/project_data/training.RDS")
 testing_data <- readRDS("data/project_data/testing.RDS")
+```
+
+## Check to see if the data.frame names are correct 
+
+```{r}
+names(testing_data)
+names(training_data)
+```
+
+```{r}
+patient <- testing_data$patient %>% 
+    mutate(dmIndicator = -1) %>% 
+    select(1, 6, 2:5) %>% 
+    rbind(training_data$patient) %>% 
+    filter(PatientGuid != "498421C5-3895-47FC-9312-0EF9B85ED820") %>% 
+    mutate(Gender = as.factor(Gender))
+```
+
+```{r}
+transcript <- testing_data$transcript %>% 
+    rbind(training_data$transcript) %>% 
+    mutate_at(vars(Height, Weight, BMI, SystolicBP, DiastolicBP, HeartRate, RespiratoryRate, Temperature)
+              , funs(as.numeric)) %>% 
+    filter(Weight > 85) %>% 
+    filter(Weight < 320) %>% 
+    group_by(PatientGuid) %>% 
+    mutate(HeightMedian = median(Height, na.rm = TRUE)) %>% 
+    mutate(WeightMedian = median(Weight, na.rm = TRUE)) %>% 
+    mutate(BMImedian = median(BMI, na.rm = TRUE)) %>% 
+    mutate(BMIc = (703 * Weight)/HeightMedian^2) %>% 
+    mutate(RespiratoryRateMedian = median(RespiratoryRate, na.rm = TRUE)) %>% 
+    mutate(HeartRateMedian = median(HeartRate, na.rm = TRUE))
+```
+
+```{r}
+patient <- transcript %>% 
+    select(PatientGuid, HeightMedian, WeightMedian, BMImedian) %>% 
+    right_join(patient, by = "PatientGuid") %>% 
+    mutate(RangeBMI = max(BMI) - min(BMI))
+```
+
+
+```{r}
+
 ```
 
