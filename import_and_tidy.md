@@ -1,21 +1,31 @@
 Kaggle Data Import & Tidy
 ================
 
+Load Required Packages
+----------------------
+
+``` r
+library(readr)      # for reading data from flat files
+library(stringr)    # for performing advanced string operations
+library(purrr)      # for functional programming using the `map` functions
+library(dplyr)      # provides `%>%` operator
+```
+
 File and Object Names
 ---------------------
 
 Keeping track of directory, file, and other object names is important to an orderly and reproducible analysis. It is important to do so from the project's very beginning so we don't get lost but also because patterns in those names can make our code easier to create and follow later on.
 
 -   The data is provided in two directories:
-    -   one for training (`sample_data/train_data/`)
-    -   one for testing (`sample_data/test_data/`)
+    -   one for training (`data/sample_data/train_data/`)
+    -   one for testing (`data/sample_data/test_data/`)
 -   Using the `list.files()` function, we can see that each directory contains 19 individual (Comma Separated Value) [CSV](https://en.wikipedia.org/wiki/Comma-separated_values) files whose names follow a recognizable pattern:
     -   each file in the `train_data` directory starts with `training_` and ends with `.csv`
     -   each file in the `test_data` directory starts with `test_` and ends with `.csv`
 
 ``` r
-training_files <- list.files(path = "sample_data/train_data/")
-testing_files <- list.files(path = "sample_data/test_data/")
+training_files <- list.files(path = "data/sample_data/train_data/")
+testing_files <- list.files(path = "data/sample_data/test_data/")
 
 training_files
 ```
@@ -74,35 +84,14 @@ testing_files[11:13]
 
 We will use these file names as inputs for the `read_csv` funtion from the package `readr`.
 
-Load Required Packages
-----------------------
-
-``` r
-library(readr)      # for reading data from flat files
-library(stringr)    # for performing advanced string operations
-library(purrr)      # for functional programming using the `map` functions
-library(dplyr)      # for manipulating data.frame and other objects
-```
-
-    ## 
-    ## Attaching package: 'dplyr'
-
-    ## The following objects are masked from 'package:stats':
-    ## 
-    ##     filter, lag
-
-    ## The following objects are masked from 'package:base':
-    ## 
-    ##     intersect, setdiff, setequal, union
-
-Read in files
--------------
+Read Files Into Working Memory
+------------------------------
 
 We will use a combination of functions to import or "read" the source files into working memory. There are a number of ways to do this but in the interest of organization we will use a combination of `read_csv()`, `paste0()`, and `map()`.
 
 ``` r
 training_data <- training_files %>% 
-    map(~paste0("sample_data/train_data/", .x)) %>% 
+    map(~paste0("data/sample_data/train_data/", .x)) %>% 
     map(read_csv)
 ```
 
@@ -174,7 +163,7 @@ training_data <- training_files %>%
     ## a multiple of vector length (arg 1)
 
     ## Warning: 4692 parsing failures.
-    ## row # A tibble: 5 x 5 col     row col              expected actual file                              expected   <int> <chr>            <chr>    <chr>  <chr>                             actual 1  1338 ObservationValue a double NULL   'sample_data/train_data/training… file 2  1339 ObservationValue a double NULL   'sample_data/train_data/training… row 3  1340 ObservationValue a double NULL   'sample_data/train_data/training… col 4  1341 ObservationValue a double NULL   'sample_data/train_data/training… expected 5  1342 ObservationValue a double NULL   'sample_data/train_data/training…
+    ## row # A tibble: 5 x 5 col     row col              expected actual file                              expected   <int> <chr>            <chr>    <chr>  <chr>                             actual 1  1338 ObservationValue a double NULL   'data/sample_data/train_data/tra… file 2  1339 ObservationValue a double NULL   'data/sample_data/train_data/tra… row 3  1340 ObservationValue a double NULL   'data/sample_data/train_data/tra… col 4  1341 ObservationValue a double NULL   'data/sample_data/train_data/tra… expected 5  1342 ObservationValue a double NULL   'data/sample_data/train_data/tra…
     ## ... ................. ... .......................................................................... ........ .......................................................................... ...... .......................................................................... .... .......................................................................... ... .......................................................................... ... .......................................................................... ........ ..........................................................................
     ## See problems(...) for more details.
 
@@ -336,7 +325,7 @@ training_data <- training_files %>%
 
 ``` r
 testing_data <- testing_files %>% 
-    map(~paste0("sample_data/test_data/", .x)) %>% 
+    map(~paste0("data/sample_data/test_data/", .x)) %>% 
     map(read_csv)
 ```
 
@@ -566,4 +555,40 @@ names(training_data) <- training_files_names
 testing_files_names <- str_replace(testing_files, "test_", "")
 testing_files_names <- str_replace(testing_files_names, "\\.csv", "")
 names(testing_data) <- testing_files_names
+```
+
+``` r
+names(training_data)
+```
+
+    ##  [1] "allergy"              "allMeds"              "diagnosis"           
+    ##  [4] "immunization"         "labObservation"       "labPanel"            
+    ##  [7] "labResult"            "labs"                 "medication"          
+    ## [10] "patientCondition"     "patient"              "patientSmokingStatus"
+    ## [13] "patientTranscript"    "prescription"         "smoke"               
+    ## [16] "transcriptAllergy"    "transcript"           "transcriptDiagnosis" 
+    ## [19] "transcriptMedication"
+
+``` r
+names(testing_data)
+```
+
+    ##  [1] "allergy"              "allMeds"              "diagnosis"           
+    ##  [4] "immunization"         "labObservation"       "labPanel"            
+    ##  [7] "labResult"            "labs"                 "medication"          
+    ## [10] "patientCondition"     "patient"              "patientSmokingStatus"
+    ## [13] "patientTranscript"    "prescription"         "smoke"               
+    ## [16] "transcriptAllergy"    "transcript"           "transcriptDiagnosis" 
+    ## [19] "transcriptMedication"
+
+Now our data objects are neatly arranged. Scripts we write to manipulate one of these lists can easily be applied to the other, ensuring uniformity across operations and making it easier to trace errors back to their sources.
+
+Save Prepared Data
+------------------
+
+We will save each of the prepared lists as `.RDS` files, which are easily read by R. Another option would be to save each `data.frame` in the lists as its own `.csv` file.
+
+``` r
+saveRDS(training_data, "data/project_data/training.RDS")
+saveRDS(testing_data, "data/project_data/testing.RDS")
 ```

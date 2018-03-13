@@ -1,0 +1,16 @@
+---
+title: "Transform"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Load data saved in last step of `import_and_tidy.Rmd`
+
+```{r}
+training_data <- readRDS("data/project_data/training.RDS")
+testing_data <- readRDS("data/project_data/testing.RDS")
+```
+

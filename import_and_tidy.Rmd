@@ -21,16 +21,16 @@ library(dplyr)      # provides `%>%` operator
 Keeping track of directory, file, and other object names is important to an orderly and reproducible analysis. It is important to do so from the project's very beginning so we don't get lost but also because patterns in those names can make our code easier to create and follow later on.
 
 * The data is provided in two directories: 
-    * one for training (`sample_data/train_data/`)
-    * one for testing (`sample_data/test_data/`)
+    * one for training (`data/sample_data/train_data/`)
+    * one for testing (`data/sample_data/test_data/`)
     
 * Using the `list.files()` function, we can see that each directory contains 19 individual (Comma Separated Value) [CSV](https://en.wikipedia.org/wiki/Comma-separated_values) files whose names follow a recognizable pattern:
     * each file in the `train_data` directory starts with `training_` and ends with `.csv`
     * each file in the `test_data` directory starts with `test_` and ends with `.csv`
 
 ```{r}
-training_files <- list.files(path = "sample_data/train_data/")
-testing_files <- list.files(path = "sample_data/test_data/")
+training_files <- list.files(path = "data/sample_data/train_data/")
+testing_files <- list.files(path = "data/sample_data/test_data/")
 
 training_files
 
@@ -57,11 +57,13 @@ We will use a combination of functions to import or "read" the source files into
  
 ```{r}
 training_data <- training_files %>% 
-    map(~paste0("sample_data/train_data/", .x)) %>% 
+    map(~paste0("data/sample_data/train_data/", .x)) %>% 
     map(read_csv)
+```
 
+```{r}
 testing_data <- testing_files %>% 
-    map(~paste0("sample_data/test_data/", .x)) %>% 
+    map(~paste0("data/sample_data/test_data/", .x)) %>% 
     map(read_csv)
 ```
 
@@ -83,4 +85,13 @@ names(testing_data)
 ```
 
 Now our data objects are neatly arranged. Scripts we write to manipulate one of these lists can easily be applied to the other, ensuring uniformity across operations and making it easier to trace errors back to their sources.
+
+## Save Prepared Data
+
+We will save each of the prepared lists as `.RDS` files, which are easily read by R. Another option would be to save each `data.frame` in the lists as its own `.csv` file.
+
+```{r}
+saveRDS(training_data, "data/project_data/training.RDS")
+saveRDS(testing_data, "data/project_data/testing.RDS")
+```
 
